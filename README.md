@@ -3,8 +3,8 @@ https://medium.com/@a_farag/deploying-a-node-js-project-with-pm2-in-production-m
 
 steps
 setup ec2
-git clone https://github.com/nagababuhyd/ec2-nodejs-nginx/
-cd ec2-nodejs-nginx
+git clone https://github.com/nagababuhyd/ec2-nodejs-apache2/
+cd ec2-nodejs-apache2
 sudo apt update && sudo apt upgrade -y
 # Install curl if missing
 sudo apt install -y curl
