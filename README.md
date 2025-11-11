@@ -36,87 +36,169 @@ enable port 22 80 3000 in security groups
 
 install apache web server for multiple req acts as proxy and load balancer for nodejs app
 access app with public ip
-
+working with ec2 ip
 ######################
 
-install certbot for http url free ssl
+🧩 2️⃣ Create Target Group (in AWS EC2 Console)
+Register your EC2 instance → check ✅ next to it → click Include as pending below → Create target group
+port 80 as apache uses 80
 
-##############################
-get domain for app
+or 3000 based on request
+#######################################
 
-in realtime after app works with apache2  to get domain name for app
+🌐 3️⃣ Create Application Load Balancer (ALB)
+=
+Scheme: Internet-facing
 
-create domain example.com
-create a record
+IP type: IPv4
 
-Name: myapp.example.com
-Type: A
-Value: <Public IP of your EC2>  or load balancer url
-TTL: 300
+Listeners:
+
+HTTP → Port 80
+
+(We’ll add HTTPS 443 later)
+
+Select your VPC and public subnets
+
+Create or select a security group:
+
+Allow inbound ports 80 and 443
+
+Under Default actions, choose:
+
+Forward to → your Target Group (myapp-tg)
+
+✅ Click Create Load Balancer
+
+Wait until ALB status = “Active”.
+
+
+
+
+
+
+
+
+access app with lb dns'📦 4️⃣ Test HTTP Access via ALB
+######################################################
+
+
+CREATE A DOMAIN''
+
+🧭 5️⃣ Create a Domain (or use existing one)
+
+Go to Route 53 → Hosted Zones → Create hosted zone
+
+Domain: example.com (or use existing)
+
+Inside the hosted zone, create a record:
+
+Record name: myapp
+
+Type: A (Alias)
+
+Alias: Yes
+
+Alias target: your ALB DNS name
+
+✅ Result:
 
 myapp.example.com → myapp-alb-123456789.us-east-1.elb.amazonaws.com
 
 
+Now your domain is pointing to your Load Balancer.
 
-##########################################
-to get ssl https
+Test:
 
-but it is working with http i want ssl then?
+curl http://myapp.example.com
 
-🥈 Option 2 — AWS Certificate Manager (ACM)
+###########################
+
+🔒 6️⃣ Add SSL (HTTPS)
+
+Step A: Request a certificate
+
+Go to AWS Certificate Manager (ACM)
+
+Click Request a certificate
+
+Choose Request a public certificate
+
+Add your domain name:
+
+myapp.example.com
 
 
-#Go to AWS Certificate Manager (ACM) → Request public certificate
+Validation method: DNS validation
 
-#Add your domain (myapp.example.com)
+ACM gives you a CNAME record to add in Route 53.
 
-#Validate via DNS 
+Click “Create record in Route 53”
 
-#(Route53 adds CNAME of ssl automatically)
+Wait a few minutes → status becomes ✅ Issued
 
-#######################
-Attach the certificate to: in load balancer listener 443
-create alb
-create target group 
-add instances
-🔹 Step 6 — Add HTTPS Listener (SSL Termination)
-Go to your Load Balancer → Listeners tab.
 
-Click Add listener → choose:
+############################################
+
+🔐 7️⃣ Attach SSL Certificate to ALB
+
+Now attach the issued certificate to your ALB’s HTTPS listener.
+
+Go to EC2 → Load Balancers → your ALB → Listeners tab
+
+Add listener:
 
 Protocol: HTTPS
 
 Port: 443
 
-Under Default action, select Forward to → your Target Group
+Default action: Forward to your Target Group (myapp-tg)
 
-Under SSL certificate, choose:
+Under SSL certificate, choose From ACM
 
-Certificate type: “From ACM”
+Select your issued certificate (myapp.example.com)
 
-Select the SSL certificate you created earlier (e.g., myapp.example.com)
+Save → ALB updates to handle HTTPS.
 
-Save.
+✅ Now your ALB accepts HTTPS traffic with a valid SSL certificate.
 
-##################################################################################
+###############################################################
 
+🔁 8️⃣ (Optional) Redirect HTTP → HTTPS
 
+You can configure ALB rules to auto-redirect all port 80 requests to port 443.
 
+In the HTTP (80) listener:
 
-🔹 Step 7 — (Optional) Redirect HTTP → HTTPS
+Edit rule → Add action → Redirect to HTTPS (443)
 
-You can make your ALB automatically redirect port 80 → 443.
+Save
 
-On the HTTP (80) listener:
-
-Click Edit rule
-
-Change action to:
-
-Redirect to → HTTPS (port 443)
+Now, all http://myapp.example.com → redirects to https://myapp.example.com.
+###################
 
 
-Save.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
