@@ -1,0 +1,33 @@
+why we should use apache here?
+
+and expose port 3000 directly to the internet.
+
+But that’s not ideal in production, because:
+
+Node.js is not optimized for handling thousands of concurrent slow connections.
+
+Node’s built-in HTTP server lacks features like caching, compression, static file serving, etc.
+
+If your Node process restarts or crashes, direct connections can break mid-request.
+
+You’d have to expose a nonstandard port (3000), which isn’t ideal for web access
+
+
+###############################
+with apache as reverse proxy and lb
+
+Handle SSL/TLS (HTTPS) termination (so Node.js doesn’t deal with certificates)
+
+🔒 2️⃣ Apache acts as a reverse proxy (front-end web server)
+Apache listens on ports 80 (HTTP) and 443 (HTTPS) — so users just visit your domain normally:
+http://yourdomain.com
+
+Load Balancing / High Availability
+
+If you scale Node.js across multiple instances (say via PM2 cluster mode or multiple servers), Apache (or NGINX) can:
+
+Distribute requests among them
+
+Retry requests if a backend node fails
+
+Act as a single public entry point
