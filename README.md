@@ -32,4 +32,11 @@ enable port 22 80 3000 in security groups
 
 
 ################
+
+
 install apache web server for multiple req acts as proxy and load balancer for nodejs app
+access app with public ip
+
+######################
+
+install certbot for http url free ssl
