@@ -1,0 +1,40 @@
+access app listen on 80
+http://34.224.84.45/
+
+sudo apt update
+sudo apt install -y apache2
+sudo systemctl status apache2
+sudo systemctl start apache2
+sudo systemctl enable apache2
+curl http://localhost
+
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+sudo a2enmod headers
+sudo a2enmod rewrite
+
+
+sudo systemctl restart apache2
+
+sudo vi /etc/apache2/sites-available/000-default.conf
+
+      <VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    ServerName localhost
+    DocumentRoot /var/www/html
+
+    # Reverse proxy settings
+    ProxyPreserveHost On
+    ProxyRequests Off
+    ProxyPass / http://127.0.0.1:3000/
+    ProxyPassReverse / http://127.0.0.1:3000/
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+
+sudo apache2ctl configtest
+sudo systemctl restart apache2
+curl http://localhost
+
