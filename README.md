@@ -1,6 +1,7 @@
 https://medium.com/@a_farag/deploying-a-node-js-project-with-pm2-in-production-mode-fc0e794dc4aa
 ####################################################################################
 
+steps
 setup ec2
 git clone https://github.com/nagababuhyd/ec2-nodejs-nginx/
 cd ec2-nodejs-nginx
@@ -28,3 +29,7 @@ pm2 logs
 curl localhost:3000
 
 enable port 22 80 3000 in security groups
+
+
+################
+install apache web server for multiple req acts as proxy and load balancer for nodejs app
